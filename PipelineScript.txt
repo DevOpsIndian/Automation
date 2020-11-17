@@ -1,0 +1,48 @@
+def workspace;
+node
+{
+    
+    stage('Code fetch')
+    {
+        echo "fetching code ----"
+        git 'https://github.com/LalaUser/DevOpsPipeline.git'
+        
+    }
+    stage('Build')
+    {
+        echo 'Building Code'
+        def mvnHome=tool name: 'Maven', type: 'maven'
+        
+        sh "${mvnHome}/bin/mvn clean package"
+       workspace=pwd
+        echo " work space is :  ${workspace}"
+    }
+    stage('Static code  Test')
+    {
+        echo ' Static test Testing Started '
+        def sonarTool= tool name: 'sonar_scanner';
+        withSonarQubeEnv('SonarQube') {
+       sh """ ${sonarTool}/bin/sonar-scanner """;
+       
+        }
+        
+    }
+    
+    stage('Functional Test')
+    {
+        // git 'https://github.com/LalaUser/SeleniumTest.git'
+       // def mvnHome=tool name: 'Maven', type: 'maven'
+        
+      //  sh "${mvnHome}/bin/mvn test"
+      
+    def job = build job: 'TestSelenium1'
+    }
+   
+    stage('Deploy')
+    {
+        
+        echo 'Deployment of code started';
+        deploy adapters: [tomcat9(credentialsId: 'test', path: '', url: 'http://3.19.255.165:8080/')], contextPath: null, war: 'target/*.war'
+    }
+     
+}

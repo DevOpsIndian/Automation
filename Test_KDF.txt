@@ -1,0 +1,54 @@
+ Action1:
+
+DataTables.AddSheet"dTestCases"
+DataTables.Addsteet"dTestSteps"
+DataTables.ImportSheet "SheetPath",""Testcases","dTestcases"
+DataTables.ImportSheet "SheetPath",""TestSteps","dTeststeps"
+
+Action2:
+
+'Get Row count of Testcases and TestSteps 
+
+'Declare variable 
+tc_Result = "Pass"
+ts_Result= "Pass"
+
+
+tcrows=Datatable.GetSheet("dTestcases").GetRowCount
+tsrows=DataTable.GetSheet("dTestSteps").GetRowCount
+for i=0 to tcrows
+DataTable.GetSheet("dTestcases").setCurrentRow(i)
+if Datatable.Value(Ëxecute",dTestcases)= "Y" Then
+forj=0 to tsrows
+DataTable.GetSheet("dTestSteps").setCurrentRow(j)
+if(DataTable.Value("TCID",dtestcases)=DataTable.Value("TCID",dteststeps) then
+
+Select DataTable.Value("Keyword",dteststeps)
+
+case "OpenCalc"
+      
+          ts_Result= OpenCalc
+
+case "ClickNum"
+      
+          ts_Result= ClickNum
+case "ClickOp"
+      
+          ts_Result= ClickOp
+case "CloseCalc"
+      
+          ts_Result= CloseCalc
+case "VerifyResult"
+      
+          ts_Result= VerifyResult
+
+End Select
+DataTable.Value("Result",dteststeps)=ts_Result
+if tc_Result= "Pass" then 
+tc_Result=ts_Result
+end if 
+end if
+Next
+DataTable.Value("Result",dTestcases)=tc_Result
+End If
+Next
